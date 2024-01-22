@@ -4,6 +4,7 @@ on:
   schedule:
     # 每天运行一次，例如在午夜。使用 POSIX cron 语法。
     - cron: '0 12 * * *'
+    workflow_dispatch: # 允许手动触发workflow
 
 jobs:
   run-script:
