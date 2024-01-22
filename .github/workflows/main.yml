@@ -1,33 +1,47 @@
-name: Run Python Script
+name: CheckScores
 
 on:
   schedule:
-    # 每天运行一次，例如在午夜。使用 POSIX cron 语法。
-    - cron: '0 12 * * *'
-    workflow_dispatch: # 允许手动触发workflow
+    - cron: "*/30 * * * *" # 每30分钟执行一次
+  workflow_dispatch: # 允许手动触发workflow
 
 jobs:
-  run-script:
-    runs-on: ubuntu-latest
+  CheckScores:
+    runs-on: ubuntu-latest # 在最新版的Ubuntu系统上运行
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout Repository # 使用GitHub Actions提供的动作来检出代码库
+        uses: actions/checkout@v2
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'
+      - name: Set up Python # 配置Python环境
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x # 使用Python 3.x版本
 
-    - name: Install dependencies
-      run: |
-        pip install -r requirements.txt
+      - name: Install dependencies # 使用pip安装项目的依赖项
+        run: |
+          pip install requests rsa pyquery
 
-    - name: Run script
-    env:
-        URL: ${{ secrets.URL }}
-        USERNAME: ${{ secrets.USERNAME }}
-        PASSWORD: ${{ secrets.PASSWORD }}
-        TOKEN: ${{ secrets.TOKEN }}
-      run: |
-        python your_script.py
+      - name: Configure Git # 配置Git用户信息
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+      - name: Run main.py # 运行主程序main.py
+        run: python main.py
+        env:
+          URL: ${{ secrets.URL }}
+          USERNAME: ${{ secrets.USERNAME }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+          TOKEN: ${{ secrets.TOKEN }}
+
+      - name: Add changes # 将当前目录中的所有更改添加到Git的暂存区
+        run: |
+          git add .
+
+      - name: Commit changes # 提交更改到Git仓库
+        run: |
+          git commit -m "Update from GitHub Actions" || true  # 如果没有更改，则允许提交失败，但不中断workflow
+
+      - name: Force push changes to main branch # 将更改强制推送到main分支
+        run: |
+          git push origin main --force
