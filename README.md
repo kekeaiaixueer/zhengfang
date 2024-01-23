@@ -32,5 +32,3 @@
 
 `Actions` → `CheckScores` → `Run workflow`
 
-_若你的程序正常运行且未报错，那么在此之后，程序将会每隔 30 分钟自动运行一次_
-
