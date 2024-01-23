@@ -2,7 +2,7 @@ name: CheckScores
 
 on:
   schedule:
-    - cron: "0 20 * * *" 
+    - cron: "0 20 * * *"
   workflow_dispatch: # 允许手动触发workflow
 
 jobs:
@@ -32,6 +32,8 @@ jobs:
           URL: ${{ secrets.URL }}
           USERNAME: ${{ secrets.USERNAME }}
           PASSWORD: ${{ secrets.PASSWORD }}
+          YEAR: ${{ secrets.YEAR }}
+          TERM: ${{ secrets.TERM }}
           TOKEN: ${{ secrets.TOKEN }}
 
       - name: Add changes # 将当前目录中的所有更改添加到Git的暂存区
