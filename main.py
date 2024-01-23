@@ -1,70 +1,111 @@
+import os
 from school_api import SchoolClient
 from pushplus import send_message
-import os
-def login_to_school(url, username, password):
-    """
-    登录到学校网站。
+from cryptography.fernet import Fernet
 
-    参数:
-    - url: 学校网站的 URL 地址。
-    - username: 学生的用户名。
-    - password: 学生的密码。
-
-    返回:
-    - user: 登录后的用户对象。
-    """
-    school = SchoolClient(url)
-    user = school.user_login(username, password)
-    return user
-
-def get_grade_data(user, year):
-    """
-    获取指定学年的成绩数据。
-
-    参数:
-    - user: 登录后的用户对象。
-    - year: 指定的学年。
-
-    返回:
-    - data_for_year: 学年的成绩数据。
-    """
-    schedule_data = user.get_score()
-    data_for_year = schedule_data.get(year, {})
-    return data_for_year
-
-def format_grade_info(data_for_year):
-    """
-    格式化成绩信息为一个字符串。
-
-    参数:
-    - data_for_year: 学年的成绩数据。
-
-    返回:
-    - integrated_grade_info: 格式化后的成绩信息字符串。
-    """
-    integrated_grade_info = "成绩信息：\n"
-    for term, courses in data_for_year.items():
-        for course in courses:
-            integrated_grade_info += (
-                f"\n科目: {course['lesson_name']}\n"
-                f"成绩: {course['score']}\n"
-                f"------"
-            )
-    return integrated_grade_info
+# 脚本的常量设置
+URL = os.environ.get("URL")  # 教务系统的URL地址
+USERNAME = os.environ.get("USERNAME")       # 登录教务系统的用户名
+PASSWORD = os.environ.get("PASSWORD")         # 登录教务系统的密码
+YEAR = os.environ.get("YEAR")              # 要查询成绩的学年
+TERM = os.environ.get("TERM")                      # 要查询成绩的学期
+TOKEN = os.environ.get("TOKEN")  # PushPlus的令牌，用于发送通知
 
 
-# 使用参数调用函数
-url = os.environ.get("URL")
-username = os.environ.get("USERNAME")
-password = os.environ.get("PASSWORD")
-year = "2023-2024"#学年
-TOKEN=os.environ.get("TOKEN")
-# 登录学校网站
-user = login_to_school(url, username, password)
-# 获取成绩数据
-data_2023_2024 = get_grade_data(user, year)
-# 格式化成绩信息
-integrated_grade_info = format_grade_info(data_2023_2024)
-# 发送成绩信息消息
-response_text = send_message('成绩', integrated_grade_info)
-print(response_text)
+DATA_FILE = 'data.txt'          # 存储当前数据的文件
+NEW_DATA_FILE = 'new_data.txt'  # 用于存储新数据以便比较的临时文件
+# 登录教务系统的函数
+def login_school(url, username, password):
+    school_client = SchoolClient(url)
+    return school_client.user_login(username, password)
+
+# 登录后从教务系统获取个人信息的函数
+def get_personal_info(school_login):
+    info = school_login.get_info()
+    name = info['real_name']
+    faculty = info['faculty']
+    return name, faculty
+
+# 获取指定学年和学期的成绩的函数
+def get_scores(school_login, year, term):
+    return school_login.get_score(score_year=year, score_term=term)
+
+# 将个人信息和成绩格式化为文本字符串的函数
+def format_score_info(name, faculty, scores):
+    info_text = f'个人信息:\n姓名:{name}\n院系:{faculty}\n相关分数\n'
+    for course in scores:
+        info_text += (
+            f"\n科目: {course['lesson_name']}\n"
+            f"成绩: {course['score']}\n"
+            f"------"
+        )
+    return info_text
+
+def load_key():
+    return open('secret', 'rb').read()
+
+# 使用Fernet进行加密
+def encrypt_message(message):
+    key = load_key()
+    f = Fernet(key)
+    encrypted_message = f.encrypt(message.encode())
+    return encrypted_message
+
+# 使用Fernet进行解密
+def decrypt_message(encrypted_message):
+    key = load_key()
+    f = Fernet(key)
+    decrypted_message = f.decrypt(encrypted_message)
+    return decrypted_message.decode()
+
+# 修改写入文件的函数，使用加密
+def write_to_file(file_path, content, mode='wb'):  # 注意模式改为'wb'因为加密后的数据是字节类型
+    encrypted_content = encrypt_message(content)
+    with open(file_path, mode) as file:
+        file.write(encrypted_content)
+
+# 修改读取文件的函数，使用解密
+def read_file(file_path):
+    with open(file_path, 'rb') as file:  # 注意模式改为'rb'因为加密后的数据是字节类型
+        encrypted_content = file.read()
+    return decrypt_message(encrypted_content)
+
+# 使用PushPlus发送通知的函数
+def send_update_notification(token, message):
+    send_message('成绩', message, token)
+
+# 主函数，负责协调脚本的运行流程
+def main():
+    # 登录教务系统
+    school_login = login_school(URL, USERNAME, PASSWORD)
+    # 获取个人信息
+    name, faculty = get_personal_info(school_login)
+    # 获取成绩
+    scores = get_scores(school_login, YEAR, TERM)
+    # 格式化信息和成绩为文本字符串
+    info_text = format_score_info(name, faculty, scores)
+    
+    # 将新数据写入临时文件
+    write_to_file(NEW_DATA_FILE, info_text)
+    
+    # 从数据文件中读取当前的数据
+    source_content = read_file(DATA_FILE)
+    # 从临时文件中读取新的数据
+    new_content = read_file(NEW_DATA_FILE)
+    
+    # 比较当前数据和新数据
+    if source_content != new_content:
+        # 如果数据不同，更新数据文件并发送通知
+        print("内容不同，已更新")
+        write_to_file(DATA_FILE, new_content)
+        send_update_notification(TOKEN, info_text)
+    else:
+        # 如果数据相同，则不需要更新
+        print("内容相同，不更新")
+    
+    # 在处理完毕后清空临时新数据文件的内容
+    write_to_file(NEW_DATA_FILE, '')
+
+# 该块确保只有在直接运行脚本时才调用main函数
+if __name__ == '__main__':
+    main()
