@@ -76,5 +76,5 @@ data_2023_2024 = get_grade_data(user, year)
 # 格式化成绩信息
 integrated_grade_info = format_grade_info(data_2023_2024)
 # 发送成绩信息消息
-a=send_grade_message('成绩', integrated_grade_info,TOKEN)
-print(a)
+response_text = send_grade_message('成绩', integrated_grade_info,TOKEN)
+print(response_text)
