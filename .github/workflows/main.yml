@@ -2,7 +2,7 @@ name: CheckScores
 
 on:
   schedule:
-    - cron: "0 12,20 * * *" # 每30分钟执行一次
+    - cron: "0 20 * * *" 
   workflow_dispatch: # 允许手动触发workflow
 
 jobs:
