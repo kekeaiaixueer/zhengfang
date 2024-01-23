@@ -17,10 +17,12 @@
 
 | Name     | 例子                       | 说明                                                                                                                 |
 | -------- | -------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| URL      | https://www.nianbroken.top | 教务系统地址                                                                                                         |
-| USERNAME | 2971802058                 | 教务系统用户名                                                                                                       |
-| PASSWORD | Y3xhaCkb5PZ4               | 教务系统密码                                                                                                         |
-| TOKEN    | J65KWMBfyDh3YPLpcvm8       | [Pushplus 的 token](https://www.pushplus.plus/doc/guide/openApi.html#_1-%E8%8E%B7%E5%8F%96token "Pushplus 的 token") |
+| URL      | https://www.nianbroken.top | 教务系统地址                                                                                                          |
+| USERNAME | 2971802058                 | 教务系统用户名                                                                                                        |
+| PASSWORD | Y3xhaCkb5PZ4               | 教务系统密码                                                                                                          |
+|   YEAR   | 2023-2024                  | 学年                                                                                                                 |
+|   TERM   | 1                          | 学期                                                                                                                 |
+|   TOKEN  | J65KWMBfyDh3YPLpcvm8       | [Pushplus 的 token](https://www.pushplus.plus/doc/guide/openApi.html#_1-%E8%8E%B7%E5%8F%96token "Pushplus 的 token") |
 
 ### 4. [开启](https://github.com/kekeaiaixueer/zhengfang/actions "开启") Actions
 
