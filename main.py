@@ -52,16 +52,6 @@ def format_grade_info(data_for_year):
             )
     return integrated_grade_info
 
-def send_grade_message(title, message, token):
-    """
-    使用 PushPlus 发送成绩信息消息。
-
-    参数:
-    - title: 消息的标题。
-    - message: 消息的内容。
-    - token: PushPlus 的 token。
-    """
-    send_message(title, message, token)
 
 # 使用参数调用函数
 url = os.environ.get("URL")
@@ -76,5 +66,5 @@ data_2023_2024 = get_grade_data(user, year)
 # 格式化成绩信息
 integrated_grade_info = format_grade_info(data_2023_2024)
 # 发送成绩信息消息
-response_text = send_grade_message('成绩', integrated_grade_info,TOKEN)
+response_text = send_message('成绩', integrated_grade_info)
 print(response_text)
