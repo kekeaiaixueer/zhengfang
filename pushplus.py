@@ -3,8 +3,8 @@ import json
 import os
 
 
-def send_message(title, content):
-    token = os.environ.get("TOKEN")
+def send_message(title, content,token):
+    token = token
     url = "http://www.pushplus.plus/send"
     data = {"token": token, "title": title, "content": content}
     body = json.dumps(data).encode(encoding="utf-8")
