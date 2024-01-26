@@ -71,8 +71,8 @@ def read_file(file_path):
     return decrypt_message(encrypted_content)
 
 # 使用PushPlus发送通知的函数
-# def send_update_notification(token, message):
-#     send_message('成绩', message, token)
+def send_update_notification(token, message):
+    send_message('成绩', message, token)
 
 # 主函数，负责协调脚本的运行流程
 def main():
@@ -96,10 +96,9 @@ def main():
     # 比较当前数据和新数据
     if source_content != new_content:
         # 如果数据不同，更新数据文件并发送通知
-        write_to_file(DATA_FILE, new_content)
-        send_message('成绩', info_text, TOKEN)
-        # send_update_notification(TOKEN, info_text)
         print("内容不同，已更新")
+        write_to_file(DATA_FILE, new_content)
+        send_update_notification(TOKEN, info_text)
     else:
         # 如果数据相同，则不需要更新
         print("内容相同，不更新")
