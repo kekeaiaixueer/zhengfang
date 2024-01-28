@@ -83,7 +83,7 @@ def main():
     # 获取成绩
     scores = get_scores(school_login, YEAR, TERM)
     # 格式化信息和成绩为文本字符串
-    info_text = format_score_info(name, faculty, scores)
+    info_text = format_score_info(scores)
     
     # 将新数据写入临时文件
     write_to_file(NEW_DATA_FILE, info_text)
