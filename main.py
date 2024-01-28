@@ -31,8 +31,8 @@ def get_scores(school_login, year, term):
     return school_login.get_score(score_year=year, score_term=term)
 
 # 将个人信息和成绩格式化为文本字符串的函数
-def format_score_info(name, faculty, scores):
-    info_text = f'个人信息:\n姓名:{name}\n院系:{faculty}\n相关分数\n'
+def format_score_info(scores):
+    info_text = f'相关分数\n'
     for course in scores:
         info_text += (
             f"\n科目: {course['lesson_name']}\n"
@@ -83,7 +83,7 @@ def main():
     # 获取成绩
     scores = get_scores(school_login, YEAR, TERM)
     # 格式化信息和成绩为文本字符串
-    info_text = format_score_info(name, faculty, scores)
+    info_text = format_score_info(scores)
     
     # 将新数据写入临时文件
     write_to_file(NEW_DATA_FILE, info_text)
