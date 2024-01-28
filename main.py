@@ -12,20 +12,6 @@ TERM = os.environ.get("TERM")                      # 要查询成绩的学期
 TOKEN = os.environ.get("TOKEN")  # PushPlus的令牌，用于发送通知
 
 
-import os
-from school_api import SchoolClient
-from pushplus import send_message
-from cryptography.fernet import Fernet
-
-# 脚本的常量设置
-URL = os.environ.get("URL")  # 教务系统的URL地址
-USERNAME = os.environ.get("USERNAME")       # 登录教务系统的用户名
-PASSWORD = os.environ.get("PASSWORD")         # 登录教务系统的密码
-YEAR = os.environ.get("YEAR")              # 要查询成绩的学年
-TERM = os.environ.get("TERM")                      # 要查询成绩的学期
-TOKEN = os.environ.get("TOKEN")  # PushPlus的令牌，用于发送通知
-
-
 DATA_FILE = 'data.txt'          # 存储当前数据的文件
 NEW_DATA_FILE = 'new_data.txt'  # 用于存储新数据以便比较的临时文件
 # 登录教务系统的函数
@@ -34,19 +20,19 @@ def login_school(url, username, password):
     return school_client.user_login(username, password)
 
 # 登录后从教务系统获取个人信息的函数
-# def get_personal_info(school_login):
-#     info = school_login.get_info()
-#     name = info['real_name']
-#     faculty = info['faculty']
-#     return name, faculty
+def get_personal_info(school_login):
+    info = school_login.get_info()
+    name = info['real_name']
+    faculty = info['faculty']
+    return name, faculty
 
 # 获取指定学年和学期的成绩的函数
 def get_scores(school_login, year, term):
     return school_login.get_score(score_year=year, score_term=term)
 
 # 将个人信息和成绩格式化为文本字符串的函数
-def format_score_info(scores):
-    info_text = f'相关分数\n'
+def format_score_info(name, faculty, scores):
+    info_text = f'个人信息:\n姓名:{name}\n院系:{faculty}\n相关分数\n'
     for course in scores:
         info_text += (
             f"\n科目: {course['lesson_name']}\n"
@@ -93,11 +79,11 @@ def main():
     # 登录教务系统
     school_login = login_school(URL, USERNAME, PASSWORD)
     # 获取个人信息
-    # name, faculty = get_personal_info(school_login)
+    name, faculty = get_personal_info(school_login)
     # 获取成绩
     scores = get_scores(school_login, YEAR, TERM)
     # 格式化信息和成绩为文本字符串
-    info_text = format_score_info(scores)
+    info_text = format_score_info(name, faculty, scores)
     
     # 将新数据写入临时文件
     write_to_file(NEW_DATA_FILE, info_text)
