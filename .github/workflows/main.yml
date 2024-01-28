@@ -8,7 +8,7 @@ on:
 jobs:
   
   CheckScores:
-    runs-on: windows-latest # 在最新版的Windows系统上运行
+    runs-on: self-hosted # 在你的Self-Hosted Runner上运行
 
     steps:
       - name: Checkout Repository # 使用GitHub Actions提供的动作来检出代码库
@@ -27,6 +27,7 @@ jobs:
         run: |
           git config --global user.email "actions@github.com"
           git config --global user.name "GitHub Actions"
+          
       - name: Run main.py # 运行主程序main.py
         run: python main.py
         env:
