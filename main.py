@@ -16,7 +16,4 @@ DATA_FILE = 'data.txt'          # 存储当前数据的文件
 NEW_DATA_FILE = 'new_data.txt'  # 用于存储新数据以便比较的临时文件
 school = SchoolClient(URL) 
 student = school.user_login(USERNAME,PASSWORD)
-aa=student.get_score(score_year=YEAR, score_term=TERM)
-a=student.get_score()
-print(aa)
-print(a)
+student.get_score()
