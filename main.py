@@ -79,6 +79,7 @@ def send_update_notification(token, message):
 def main():
     # 登录教务系统
     school_login = login_school(URL, USERNAME, PASSWORD)
+    print(school_login.get_info())
     # 获取个人信息
     name, faculty = get_personal_info(school_login)
     # 获取成绩
