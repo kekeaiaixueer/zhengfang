@@ -6,8 +6,9 @@ on:
   workflow_dispatch: # 允许手动触发workflow
 
 jobs:
+  
   CheckScores:
-    runs-on: ubuntu-latest # 在最新版的Ubuntu系统上运行
+    runs-on: windows-latest # 在最新版的Windows系统上运行
 
     steps:
       - name: Checkout Repository # 使用GitHub Actions提供的动作来检出代码库
