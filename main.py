@@ -22,6 +22,7 @@ def login_school(url, username, password):
 # 登录后从教务系统获取个人信息的函数
 def get_personal_info(school_login):
     info = school_login.get_info()
+    print(info)
     name = info['real_name']
     faculty = info['faculty']
     return name, faculty
