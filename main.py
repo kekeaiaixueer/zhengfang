@@ -22,9 +22,7 @@ def login_school(url, username, password):
 # 登录后从教务系统获取个人信息的函数
 def get_personal_info(school_login):
     info = school_login.get_info()
-    name = info['real_name']
-    faculty = info['faculty']
-    return name, faculty
+    return 
 
 # 获取指定学年和学期的成绩的函数
 def get_scores(school_login, year, term):
