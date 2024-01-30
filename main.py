@@ -2,7 +2,7 @@ import os
 from school_api import SchoolClient
 from pushplus import send_message
 from cryptography.fernet import Fernet
-
+import socket
 # 脚本的常量设置
 URL = os.environ.get("URL")  # 教务系统的URL地址
 USERNAME = os.environ.get("USERNAME")       # 登录教务系统的用户名
@@ -14,6 +14,21 @@ TOKEN = os.environ.get("TOKEN")  # PushPlus的令牌，用于发送通知
 
 DATA_FILE = 'data.txt'          # 存储当前数据的文件
 NEW_DATA_FILE = 'new_data.txt'  # 用于存储新数据以便比较的临时文件
+
+def test_connect(host, port):
+    # 创建socket对象
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # 设置超时时间
+        s.settimeout(5)
+    # 连接服务器
+        try:
+            s.connect((host, port))
+            print('connect success')
+        except socket.error as e:
+          print('connect fail')
+        finally:
+            s.close()
+
 # 登录教务系统的函数
 def login_school(url, username, password):
     school_client = SchoolClient(url)
@@ -108,4 +123,5 @@ def main():
 
 # 该块确保只有在直接运行脚本时才调用main函数
 if __name__ == '__main__':
+    test_connect(URL, 80)
     main()
