@@ -2,7 +2,7 @@ import os
 from school_api import SchoolClient
 from pushplus import send_message
 from cryptography.fernet import Fernet
-import socket
+import random
 # 脚本的常量设置
 URL = os.environ.get("URL")  # 教务系统的URL地址
 USERNAME = os.environ.get("USERNAME")       # 登录教务系统的用户名
@@ -11,43 +11,35 @@ YEAR = os.environ.get("YEAR")              # 要查询成绩的学年
 TERM = os.environ.get("TERM")                      # 要查询成绩的学期
 TOKEN = os.environ.get("TOKEN")  # PushPlus的令牌，用于发送通知
 
+proxies_list = [
+    {"http": "http://183.247.152.98:53281", "https": "https://183.247.152.98:53281"},
+    {"http": "http://117.26.41.218:8888", "https": "https://117.26.41.218:8888"},
+    {"http": "http://58.220.95.55:9400", "https": "https://58.220.95.55:9400"},
+    
+    # 更多代理...
+]
 
 DATA_FILE = 'data.txt'          # 存储当前数据的文件
 NEW_DATA_FILE = 'new_data.txt'  # 用于存储新数据以便比较的临时文件
-
-def test_connect(host, port):
-    # 创建socket对象
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    # 设置超时时间
-        s.settimeout(5)
-    # 连接服务器
-        try:
-            s.connect((host, port))
-            print('connect success')
-        except socket.error as e:
-          print('connect fail')
-        finally:
-            s.close()
-
 # 登录教务系统的函数
-def login_school(url, username, password):
-    school_client = SchoolClient(url)
+def login_school(url, username, password, proxies):
+    school_client = SchoolClient(url,proxies=proxies)
     return school_client.user_login(username, password)
 
 # 登录后从教务系统获取个人信息的函数
-def get_personal_info(school_login):
-    info = school_login.get_info()
-    name = info['real_name']
-    faculty = info['faculty']
-    return name, faculty
+# def get_personal_info(school_login):
+#     info = school_login.get_info()
+#     name = info['real_name']
+#     faculty = info['faculty']
+#     return name, faculty
 
 # 获取指定学年和学期的成绩的函数
 def get_scores(school_login, year, term):
     return school_login.get_score(score_year=year, score_term=term)
 
 # 将个人信息和成绩格式化为文本字符串的函数
-def format_score_info(name, faculty, scores):
-    info_text = f'个人信息:\n姓名:{name}\n院系:{faculty}\n相关分数\n'
+def format_score_info(scores):
+    info_text = f'相关分数\n'
     for course in scores:
         info_text += (
             f"\n科目: {course['lesson_name']}\n"
@@ -91,14 +83,15 @@ def send_update_notification(token, message):
 
 # 主函数，负责协调脚本的运行流程
 def main():
+    proxy = random.choice(proxies_list)
     # 登录教务系统
-    school_login = login_school(URL, USERNAME, PASSWORD)
+    school_login = login_school(URL, USERNAME, PASSWORD, proxy)
     # 获取个人信息
-    name, faculty = get_personal_info(school_login)
+    # name, faculty = get_personal_info(school_login)
     # 获取成绩
     scores = get_scores(school_login, YEAR, TERM)
     # 格式化信息和成绩为文本字符串
-    info_text = format_score_info(name, faculty, scores)
+    info_text = format_score_info(scores)
     
     # 将新数据写入临时文件
     write_to_file(NEW_DATA_FILE, info_text)
@@ -111,17 +104,16 @@ def main():
     # 比较当前数据和新数据
     if source_content != new_content:
         # 如果数据不同，更新数据文件并发送通知
-        print("内容不同，已更新")
+        print('推送')
         write_to_file(DATA_FILE, new_content)
         send_update_notification(TOKEN, info_text)
     else:
         # 如果数据相同，则不需要更新
-        print("内容相同，不更新")
+        print('不推送')
     
     # 在处理完毕后清空临时新数据文件的内容
     write_to_file(NEW_DATA_FILE, '')
 
 # 该块确保只有在直接运行脚本时才调用main函数
 if __name__ == '__main__':
-    test_connect(URL, 80)
     main()
