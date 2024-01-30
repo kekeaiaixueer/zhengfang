@@ -12,6 +12,7 @@ TERM = os.environ.get("TERM")                      # 要查询成绩的学期
 TOKEN = os.environ.get("TOKEN")  # PushPlus的令牌，用于发送通知
 conf = {
     "url": URL,
+    "lan_url": URL,
     "proxies": {"http": "http://117.26.41.218:8888"},
     "priority_proxy": True  # 值为True时，则直接使用代理访问lan_url地址
 }
