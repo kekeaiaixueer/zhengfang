@@ -21,7 +21,7 @@ jobs:
 
       - name: Install dependencies # 使用pip安装项目的依赖项
         run: |
-          pip install pip requests rsa pyquery school_api cryptography socket
+          pip install requests rsa pyquery school_api cryptography
 
       - name: Configure Git # 配置Git用户信息
         run: |
