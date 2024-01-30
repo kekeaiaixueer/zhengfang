@@ -14,7 +14,7 @@ conf = {
     "url": URL,
     "lan_url": URL,
     "proxies": {"http": "http://117.26.41.218:8888"},
-    "priority_proxy": True  # 值为True时，则直接使用代理访问lan_url地址
+    "priority_proxy": False  # 值为True时，则直接使用代理访问lan_url地址
 }
 school = SchoolClient(**conf)
 student=school.user_login(USERNAME,PASSWORD,timeout=10)
