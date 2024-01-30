@@ -8,7 +8,7 @@ on:
 jobs:
   
   CheckScores:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository # 使用GitHub Actions提供的动作来检出代码库
