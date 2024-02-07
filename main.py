@@ -110,11 +110,10 @@ def main():
 if __name__ == '__main__':
     main()
     try:
-    print('正在生成运行结果')
-    summary='|序号|青年大学习打卡状态|\n|-|-|'
-    count=0
-    with open(os.environ['GITHUB_STEP_SUMMARY'],'w+',encoding='utf8') as finaloutput:
-        finaloutput.write(summary)
+        print('正在生成运行结果')
+        summary='|序号|青年大学习打卡状态|\n|-|-|'
+        count=0
+        with open(os.environ['GITHUB_STEP_SUMMARY'],'w+',encoding='utf8') as finaloutput:
+            finaloutput.write(summary)
     except:
         pass
-
