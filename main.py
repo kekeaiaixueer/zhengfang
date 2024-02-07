@@ -96,12 +96,14 @@ def main():
     # 比较当前数据和新数据
     if source_content != new_content:
         # 如果数据不同，更新数据文件并发送通知
-        print("内容不同，已更新")
+        with open(os.environ['GITHUB_STEP_SUMMARY'],'w+',encoding='utf8') as f:
+            f.write('数据不同，进行推送')
         write_to_file(DATA_FILE, new_content)
         send_update_notification(TOKEN, info_text)
     else:
         # 如果数据相同，则不需要更新
-        print("内容相同，不更新")
+        with open(os.environ['GITHUB_STEP_SUMMARY'],'w+',encoding='utf8') as f:
+            f.write('数据相同，不进行操作')
     
     # 在处理完毕后清空临时新数据文件的内容
     write_to_file(NEW_DATA_FILE, '')
@@ -109,11 +111,3 @@ def main():
 # 该块确保只有在直接运行脚本时才调用main函数
 if __name__ == '__main__':
     main()
-    try:
-        print('正在生成运行结果')
-        summary='|序号|青年大学习打卡状态|\n|-|-|'
-        count=0
-        with open(os.environ['GITHUB_STEP_SUMMARY'],'w+',encoding='utf8') as finaloutput:
-            finaloutput.write(summary)
-    except:
-        pass
