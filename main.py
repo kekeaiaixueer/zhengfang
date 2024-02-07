@@ -69,7 +69,9 @@ def read_file(file_path):
     with open(file_path, 'rb') as file:  # 注意模式改为'rb'因为加密后的数据是字节类型
         encrypted_content = file.read()
     return decrypt_message(encrypted_content)
-
+def summary(data):
+    with open(os.environ['GITHUB_STEP_SUMMARY'],'w+',encoding='utf8') as f:
+            f.write(data)
 # 使用PushPlus发送通知的函数
 def send_update_notification(token, message):
     send_message('成绩', message, token)
@@ -96,14 +98,12 @@ def main():
     # 比较当前数据和新数据
     if source_content != new_content:
         # 如果数据不同，更新数据文件并发送通知
-        with open(os.environ['GITHUB_STEP_SUMMARY'],'w+',encoding='utf8') as f:
-            f.write('数据不同，进行推送')
+        summary('数据不同，进行推送')
         write_to_file(DATA_FILE, new_content)
         send_update_notification(TOKEN, info_text)
     else:
         # 如果数据相同，则不需要更新
-        with open(os.environ['GITHUB_STEP_SUMMARY'],'w+',encoding='utf8') as f:
-            f.write('数据相同，不进行操作')
+        summary('数据相同，不进行操作')
     
     # 在处理完毕后清空临时新数据文件的内容
     write_to_file(NEW_DATA_FILE, '')
