@@ -1,5 +1,6 @@
-#正方教务系统成绩获取
-###目前适用于广安职业技术学院
+正方教务系统成绩获取
+
+目前适用于广安职业技术学院
 ## 使用方法
 
 ### 1. [Fork](https://github.com/kekeaiaixueer/zhengfang/fork "Fork") 本仓库
