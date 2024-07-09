@@ -1,9 +1,9 @@
 name: CheckScores
 
 on:
-  # schedule:
-  #   - cron: "30 * * * *"
-  # workflow_dispatch: # 允许手动触发workflow
+  schedule:
+    - cron: "30 * * * *"
+  workflow_dispatch: # 允许手动触发workflow
 
 jobs:
   
